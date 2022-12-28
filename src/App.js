@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import './App.css';
 import * as THREE from "three";
-//import { DoubleSide } from 'three';
+import { DoubleSide } from 'three';
 
 let scene, camera, renderer, cube, data;
 let geometry, material, plane, amount;
@@ -22,40 +22,49 @@ class App extends Component{
 
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
-		//document.body.appendChild(renderer.domElement);
+		document.body.appendChild(renderer.domElement);
 
-		geometry = new THREE.BoxGeometry();
-		material = new THREE.MeshBasicMaterial({color: 0xDEB887, wireframe: false});	
-		cube = new THREE.Mesh(geometry, material);
-
-		scene.add(cube);
 		camera.position.z = 5;
 
 		/*Data texture*/
-		var side = 64; 
+		var side = 32; 
 		amount = Math.pow(side, 2); 
 		data = new Uint8Array(amount);
 
 
 		for (var i = 0; i < amount; i++) {
+		
 			for ( var j = 0; j < amount; j++){
-				data[i * amount + j] = (i - j) % 2;
+				data[i * amount + j] = (i - j) % 2.2;
 			}
+
+			//for ( var j = 0; j < amount; j++){
+			//	data[i] = i++;
+			//}
+
+			//data[i] = Math.floor(i / side) % 2 === 0 ? 1 : 0;
+			//data[i] = (i + i) % 2 === 0 ? 1 : 0;
+			
 		}
+		
 
 		var dataTex = new THREE.DataTexture(data, side, side, THREE.LuminanceFormat);
 		//dataTex.rotation = 0.7;
 		dataTex.magFilter = THREE.NearestFilter;
-		dataTex.needsUpdate = true;
+		//dataTex.needsUpdate = true;
 
 		var planeGeo = new THREE.PlaneBufferGeometry(10, 10);
-		var planeMat = new THREE.MeshBasicMaterial({  map: dataTex });
+		var planeMat = new THREE.MeshBasicMaterial({  color: 0x0000FF, alphaMap: dataTex, transparent: true, side: DoubleSide});
 		plane = new THREE.Mesh(planeGeo, planeMat);
 		plane.position.z = -5;
 		scene.add(plane);
-		
-		
 
+		geometry = new THREE.BoxGeometry(1, 1, 1);
+		material = new THREE.MeshBasicMaterial({ color: 0xDEB887});	
+		cube = new THREE.Mesh(geometry, material);
+		cube.position.x = -3;
+		scene.add(cube);
+		
 		return renderer.domElement;
 	
 	}
@@ -67,8 +76,6 @@ class App extends Component{
   		cube.rotation.y += 0.01;
 		//plane.rotation.x += 0.01;
 		
-		
-
   		renderer.render(scene, camera);
 	}
 
