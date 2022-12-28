@@ -43,7 +43,7 @@ class App extends Component{
 				data[ stride + 3 ] 	= 254;// alpha
 			}
 			else{
-				var stride = (i) * side / (side/16);
+				stride = (i) * side / (side/16);
 
 				data[ stride ] 		= 255 ;// red
 				data[ stride + 1 ] 	= 0 ;// green
