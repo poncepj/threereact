@@ -19,48 +19,53 @@ class App extends Component{
 		scene.background = new THREE.Color (0x556B2F);
 
 		camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight);
+		camera.position.z = 5;
 
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
 
-		camera.position.z = 5;
+		
 
-		/*Data texture*/
-		var side = 32; 
+		const planeSize = 10;
+		const side = 64; 
 		amount = Math.pow(side, 2); 
-		data = new Uint8Array(amount);
+		data = new Uint8Array(amount * 4);
 
+		for (var i = 0; i < amount ; i++) {
 
-		for (var i = 0; i < amount; i++) {
-		
-			for ( var j = 0; j < amount; j++){
-				data[i * amount + j] = (i - j) % 2.2;
+			if (i % 6){	
+				var stride = (i) * side / (side/8);
+
+				data[ stride ] 		= 255 ;// red
+				data[ stride + 1 ] 	= 255 ;// green
+				data[ stride + 2 ] 	= 0;// blue
+				data[ stride + 3 ] 	= 254;// alpha
 			}
+			else{
+				var stride = (i) * side / (side/16);
 
-			//for ( var j = 0; j < amount; j++){
-			//	data[i] = i++;
-			//}
+				data[ stride ] 		= 255 ;// red
+				data[ stride + 1 ] 	= 0 ;// green
+				data[ stride + 2 ] 	= 0;// blue
+				data[ stride + 3 ] 	= 254;// alpha
+			}                         			
 
-			//data[i] = Math.floor(i / side) % 2 === 0 ? 1 : 0;
-			//data[i] = (i + i) % 2 === 0 ? 1 : 0;
-			
 		}
-		
 
-		var dataTex = new THREE.DataTexture(data, side, side, THREE.LuminanceFormat);
+		var dataTex = new THREE.DataTexture(data, side, side);
 		//dataTex.rotation = 0.7;
 		dataTex.magFilter = THREE.NearestFilter;
-		//dataTex.needsUpdate = true;
+		dataTex.needsUpdate = true;
 
-		var planeGeo = new THREE.PlaneBufferGeometry(10, 10);
-		var planeMat = new THREE.MeshBasicMaterial({  color: 0x0000FF, alphaMap: dataTex, transparent: true, side: DoubleSide});
+		var planeGeo = new THREE.PlaneBufferGeometry(planeSize, planeSize);
+		var planeMat = new THREE.MeshBasicMaterial({  map: dataTex, transparent: true, side: DoubleSide});
 		plane = new THREE.Mesh(planeGeo, planeMat);
 		plane.position.z = -5;
 		scene.add(plane);
 
 		geometry = new THREE.BoxGeometry(1, 1, 1);
-		material = new THREE.MeshBasicMaterial({ color: 0xDEB887});	
+		material = new THREE.MeshBasicMaterial({ map: dataTex});	
 		cube = new THREE.Mesh(geometry, material);
 		cube.position.x = -3;
 		scene.add(cube);
