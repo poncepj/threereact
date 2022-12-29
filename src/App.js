@@ -28,28 +28,29 @@ class App extends Component{
 		
 
 		const planeSize = 10;
-		const side = 64; 
+		const side = 3; 
 		amount = Math.pow(side, 2); 
 		data = new Uint8Array(amount * 4);
 
-		for (var i = 0; i < amount ; i++) {
+		for (var i = 0; i < amount  ; i++) {
 
-			if (i % 6){	
-				var stride = (i) * side / (side/8);
+			if (i % 2 === 0){	
+				var stride = (i) * side / (side/4);
 
 				data[ stride ] 		= 255 ;// red
 				data[ stride + 1 ] 	= 255 ;// green
 				data[ stride + 2 ] 	= 0;// blue
 				data[ stride + 3 ] 	= 254;// alpha
+				
 			}
 			else{
-				stride = (i) * side / (side/16);
+				stride = (i) * side / (side/4);
 
 				data[ stride ] 		= 255 ;// red
 				data[ stride + 1 ] 	= 0 ;// green
 				data[ stride + 2 ] 	= 0;// blue
 				data[ stride + 3 ] 	= 254;// alpha
-			}                         			
+			}                       			
 
 		}
 
