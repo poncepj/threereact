@@ -3,8 +3,8 @@ import './App.css';
 import * as THREE from "three";
 import { DoubleSide } from 'three';
 
-let scene, camera, renderer, cube, data;
-let geometry, material, plane, amount;
+let scene, camera, renderer;
+let geometry, material, plane, cube;
 
 class App extends Component{
 	constructor(props){
@@ -27,11 +27,12 @@ class App extends Component{
 
 		
 
-		const planeSize = 10;
-		const side = 3; 
-		amount = Math.pow(side, 2); 
-		data = new Uint8Array(amount * 4);
-
+		const planeSize = 5;
+		const side = 7; 
+		const amount = Math.pow(side, 2); 
+		const data = new Uint8Array(amount * 4);
+		const center = new THREE.Vector2( .5,.5);
+		
 		for (var i = 0; i < amount  ; i++) {
 
 			if (i % 2 === 0){	
@@ -42,8 +43,7 @@ class App extends Component{
 				data[ stride + 2 ] 	= 0;// blue
 				data[ stride + 3 ] 	= 254;// alpha
 				
-			}
-			else{
+			} else {
 				stride = (i) * side / (side/4);
 
 				data[ stride ] 		= 255 ;// red
@@ -54,19 +54,23 @@ class App extends Component{
 
 		}
 
-		var dataTex = new THREE.DataTexture(data, side, side);
-		//dataTex.rotation = 0.7;
+		var dataTex = new THREE.DataTexture(data, side , side );
+		//dataTex.rotation = 0.785;
+		dataTex.wrapS = THREE.RepeatWrapping;
+		dataTex.wrapT = THREE.RepeatWrapping;
+		dataTex.repeat.set(1,1);
+		dataTex.center = center;
 		dataTex.magFilter = THREE.NearestFilter;
 		dataTex.needsUpdate = true;
 
 		var planeGeo = new THREE.PlaneBufferGeometry(planeSize, planeSize);
 		var planeMat = new THREE.MeshBasicMaterial({  map: dataTex, transparent: true, side: DoubleSide});
 		plane = new THREE.Mesh(planeGeo, planeMat);
-		plane.position.z = -5;
+		plane.position.z = 0;
 		scene.add(plane);
 
 		geometry = new THREE.BoxGeometry(1, 1, 1);
-		material = new THREE.MeshBasicMaterial({ map: dataTex});	
+		material = new THREE.MeshBasicMaterial({ map: dataTex });	
 		cube = new THREE.Mesh(geometry, material);
 		cube.position.x = -3;
 		scene.add(cube);
